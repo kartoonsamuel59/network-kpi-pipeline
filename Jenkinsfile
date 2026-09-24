@@ -7,6 +7,7 @@ pipeline {
         ECR_REPO_NAME  = 'network-kpi-app'
         IMAGE_TAG      = "${env.BUILD_NUMBER}"
         ECR_REGISTRY   = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        EC2_HOST       = 'ec2-user@52.47.82.75'
     }
 
     stages {
@@ -35,6 +36,22 @@ pipeline {
                         aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
                         docker tag ${ECR_REPO_NAME}:${IMAGE_TAG} ${ECR_REGISTRY}/${ECR_REPO_NAME}:${IMAGE_TAG}
                         docker push ${ECR_REGISTRY}/${ECR_REPO_NAME}:${IMAGE_TAG}
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to EC2') {
+            steps {
+                sshagent(credentials: ['ec2-ssh-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${EC2_HOST} '
+                            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY} &&
+                            docker pull ${ECR_REGISTRY}/${ECR_REPO_NAME}:${IMAGE_TAG} &&
+                            docker stop network-kpi-app || true &&
+                            docker rm network-kpi-app || true &&
+                            docker run -d -p 80:3000 --name network-kpi-app ${ECR_REGISTRY}/${ECR_REPO_NAME}:${IMAGE_TAG}
+                        '
                     """
                 }
             }

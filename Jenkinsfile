@@ -5,6 +5,7 @@ pipeline {
         AWS_REGION     = 'eu-west-3'
         AWS_ACCOUNT_ID = '984941514401'
         ECR_REPO_NAME  = 'network-kpi-app'
+        IMAGE_TAG      = "${env.BUILD_NUMBER}"
     }
 
     stages {

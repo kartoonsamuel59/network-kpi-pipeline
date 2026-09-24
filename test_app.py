@@ -7,7 +7,7 @@ class HealthCheckTest(unittest.TestCase):
         try:
             resp = urllib.request.urlopen("http://localhost:3000/health")
             self.assertEqual(resp.status, 200)
-            self.assertEqual(resp.read(), b"ok")
+            self.assertEqual(resp.read(), b"ok - v2")
         finally:
             proc.terminate()
             proc.wait()  # block until the subprocess has actually exited

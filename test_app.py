@@ -1,8 +1,8 @@
-import subprocess, time, urllib.request, unittest
+import subprocess, sys, time, urllib.request, unittest
 
 class HealthCheckTest(unittest.TestCase):
     def test_health_endpoint(self):
-        proc = subprocess.Popen(["python", "app.py"])
+        proc = subprocess.Popen([sys.executable, "app.py"])
         time.sleep(1)  # give the server a moment to start listening
         try:
             resp = urllib.request.urlopen("http://localhost:3000/health")

@@ -20,5 +20,11 @@ pipeline {
                 sh 'python3 test_app.py'
             }
         }
+
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t ${ECR_REPO_NAME}:${IMAGE_TAG} ."
+            }
+        }
     }
 }

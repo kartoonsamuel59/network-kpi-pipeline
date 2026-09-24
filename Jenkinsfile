@@ -7,16 +7,10 @@ pipeline {
         ECR_REPO_NAME  = 'network-kpi-app'
         IMAGE_TAG      = "${env.BUILD_NUMBER}"
         ECR_REGISTRY   = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-        EC2_HOST = 'ec2-user@35.180.31.120'
+        EC2_HOST       = 'ec2-user@35.180.31.120'
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Test') {
             steps {
                 sh 'python3 test_app.py'
